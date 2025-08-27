@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MHO — Health</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Simple styles for profiles */
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: #fafafa;
+    }
+    .profile-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    .barangay-list button {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.25rem 0;
+      border: none;
+      border-radius: 6px;
+      background: #f0f0f0;
+      cursor: pointer;
+      text-align: left;
+    }
+    .barangay-list button:hover {
+      background: #e0e0e0;
+    }
+    .search-bar {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .back-btn {
+      margin-bottom: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="mho_dashboard.html">
+      <img src="assets/logo.png" alt="Logo" class="logo" />
+      <span class="brand-name">MHO</span>
+    </a>
+    <nav>
+      <a href="login.html" class="btn danger">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="reports">Reports</button>
+      <button class="tab-btn" data-tab="accounts">Accounts</button>
+    </nav>
+
+    <!-- Reports tab -->
+    <section id="reports" class="tab-content active">
+      <h2>Reports</h2>
+      <label for="barangaySelect">Choose Barangay:</label>
+      <select id="barangaySelect">
+        <option value="all">All</option>
+        <option>Abiacao</option>
+        <option>Bagong Tubig</option>
+        <option>Balagtasin</option>
+        <option>Balite</option>
+        <option>Banoyo</option>
+        <option>Boboy</option>
+        <option>Bonliw</option>
+        <option>Calumpang East</option>
+        <option>Calumpang West</option>
+        <option>Dulangan</option>
+        <option>Durungao</option>
+        <option>Locloc</option>
+        <option>Luya</option>
+        <option>Mahabang Parang</option>
+        <option>Manggahan</option>
+        <option>Muzon</option>
+        <option>San Antonio</option>
+        <option>San Isidro</option>
+        <option>San Jose</option>
+        <option>San Martin</option>
+        <option>Santa Monica</option>
+        <option>Taliba</option>
+        <option>Talon</option>
+        <option>Tejero</option>
+        <option>Tungal</option>
+        <option>Poblacion</option>
+      </select>
+      <div class="row mt-4">
+        <div class="col card canvas-card">
+          <h3>Vaccine Completion</h3>
+          <canvas id="pieChart" width="720" height="340"></canvas>
+        </div>
+        <div class="col card canvas-card">
+          <h3>Vaccines Given</h3>
+          <canvas id="barChart" width="720" height="340"></canvas>
+        </div>
+      </div>
+      <div class="mt-4 card">
+        <h3>Children Records</h3>
+        <div class="table-wrap" style="overflow-x:auto;">
+          <table id="mhoTable" class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Age in months</th>
+                <th>Date of Birth</th>
+                <th>Name of Mother</th>
+                <th>BCG</th>
+                <th>HEPA B</th>
+                <th>PENTA 1</th>
+                <th>PENTA 2</th>
+                <th>PENTA 3</th>
+                <th>OPV1</th>
+                <th>OPV2</th>
+                <th>OPV3</th>
+                <th>IPV1</th>
+                <th>IPV2</th>
+                <th>PCV1</th>
+                <th>PCV2</th>
+                <th>PCV3</th>
+                <th>MCV1</th>
+                <th>MCV2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Children data will be loaded dynamically here -->
+            </tbody>
+          </table>
+        </div>
+        <p id="mhoEmpty" class="muted mt-2" style="display:none;">No records yet.</p>
+      </div>
+
+          <p id="mhoEmpty" class="muted mt-2" style="display:none;">No records yet.</p>
+        </div>
+
+      <button id="downloadData" class="btn secondary mt-4">Download Data (CSV/XLS)</button>
+    </section>
+
+    <!-- Accounts tab -->
+    <section id="accounts" class="tab-content" style="display:none;">
+      <h2>Accounts</h2>
+      <div class="profile-card">
+        <img src="assets/mho.png" alt="MHO">
+        <div>
+          <strong>Municipal Health Office</strong><br>
+          Email: mho@gmail.com<br>
+          Password: password
+        </div>
+      </div>
+
+      <input type="text" id="searchBarangay" class="search-bar" placeholder="Search barangay...">
+
+      <div id="barangayList" class="barangay-list">
+        <!-- Barangay list will be generated by JS -->
+      </div>
+
+      <div id="barangayProfiles" style="display:none;">
+        <button class="back-btn" onclick="showBarangayList()">← Back to Barangays</button>
+        <div id="profilesContainer"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <small>&copy; <span id="y"></span> HealthPro</small>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById('y').textContent=new Date().getFullYear();
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tab=>tab.style.display="none");
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).style.display="block";
+      });
+    });
+
+    // Barangay accounts
+    const accounts = {
+      "Abiacao": { bns: "abiacao@gmail.com", bhw: "abiacaobhw1@gmail.com" },
+      "Bagong Tubig": { bns: "bagongtubig@gmail.com", bhw: "bagongtubighw1@gmail.com" },
+      "Balagtasin": { bns: "balagtasin@gmail.com", bhw: "balagtasinhw1@gmail.com" },
+      "Balite": { bns: "balite@gmail.com", bhw: "balitebhw1@gmail.com" },
+      "Banoyo": { bns: "banoyo@gmail.com", bhw: "banoyobhw1@gmail.com" },
+      "Boboy": { bns: "boboy@gmail.com", bhw: "boboybhw1@gmail.com" },
+      "Bonliw": { bns: "bonliw@gmail.com", bhw: "bonliwbhw1@gmail.com" },
+      "Calumpang East": { bns: "calumpangeast@gmail.com", bhw: "calumpangeastbhw1@gmail.com" },
+      "Calumpang West": { bns: "calumpangwest@gmail.com", bhw: "calumpangwestbhw1@gmail.com" },
+      "Dulangan": { bns: "dulangan@gmail.com", bhw: "dulanganbhw1@gmail.com" },
+      "Durungao": { bns: "durungao@gmail.com", bhw: "durungaobhw1@gmail.com" },
+      "Locloc": { bns: "locloc@gmail.com", bhw: "loclocbhw1@gmail.com" },
+      "Luya": { bns: "luya@gmail.com", bhw: "luyabhw1@gmail.com" },
+      "Mahabang Parang": { bns: "mahabangparang@gmail.com", bhw: "mahabangparangbhw1@gmail.com" },
+      "Manggahan": { bns: "manggahan@gmail.com", bhw: "manggahanbhw1@gmail.com" },
+      "Muzon": { bns: "muzon@gmail.com", bhw: "muzonbhw1@gmail.com" },
+      "San Antonio": { bns: "sanantonio@gmail.com", bhw: "sanantoniobhw1@gmail.com" },
+      "San Isidro": { bns: "sanishidro@gmail.com", bhw: "sanishidrobhw1@gmail.com" },
+      "San Jose": { bns: "sanjose@gmail.com", bhw: "sanjosebhw1@gmail.com" },
+      "San Martin": { bns: "sanmartin@gmail.com", bhw: "sanmartinbhw1@gmail.com" },
+      "Santa Monica": { bns: "santamonica@gmail.com", bhw: "santamonicabhw1@gmail.com" },
+      "Taliba": { bns: "taliba@gmail.com", bhw: "talibabhw1@gmail.com" },
+      "Talon": { bns: "talon@gmail.com", bhw: "talonbhw1@gmail.com" },
+      "Tejero": { bns: "tejero@gmail.com", bhw: "tejerobhw1@gmail.com" },
+      "Tungal": { bns: "tungal@gmail.com", bhw: "tungalbhw1@gmail.com" },
+      "Poblacion": { bns: "poblacion@gmail.com", bhw: "poblacionbhw1@gmail.com" }
+    };
+
+    const barangays = Object.keys(accounts);
+    const barangayListEl = document.getElementById("barangayList");
+    const profilesEl = document.getElementById("barangayProfiles");
+    const profilesContainer = document.getElementById("profilesContainer");
+
+    function renderBarangayList(filter="") {
+      barangayListEl.innerHTML="";
+      barangays.filter(b=>b.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(b=>{
+          const btn=document.createElement("button");
+          btn.textContent=b;
+          btn.onclick=()=>showProfiles(b);
+          barangayListEl.appendChild(btn);
+        });
+    }
+
+    function showProfiles(barangay) {
+  barangayListEl.style.display="none";
+  profilesEl.style.display="block";
+  const acc = accounts[barangay];
+  profilesContainer.innerHTML=`
+    <h3>${barangay}</h3>
+    <div class="profile-card">
+      <img src="assets/icon.png" alt="BNS">
+      <div>
+        <strong>BNS: Sample Name</strong><br>
+        Age: -- <br>
+        Contact: -- <br>
+        Email: ${acc?.bns || "--"}
+      </div>
+    </div>
+    <div class="profile-card">
+      <img src="assets/icon.png" alt="BHW">
+      <div>
+        <strong>BHW: Sample Name</strong><br>
+        Age: -- <br>
+        Contact: -- <br>
+        Email: ${acc?.bhw || "--"}
+      </div>
+    </div>
+  `;
+}
+
+
+    function showBarangayList() {
+      profilesEl.style.display="none";
+      barangayListEl.style.display="block";
+    }
+
+    document.getElementById("searchBarangay").addEventListener("input",e=>{
+      renderBarangayList(e.target.value);
+    });
+
+    renderBarangayList();
+  </script>
+</body>
+</html>
